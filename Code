@@ -1,0 +1,51 @@
+import time
+from time import sleep
+import RPi.GPIO as GPIO
+GPIO.setmode(GPIO.BCM)
+    
+TRIG = 3 
+ECHO = 2
+
+GPIO.setup(TRIG,GPIO.OUT) 
+GPIO.output(TRIG,0)
+GPIO.setup(ECHO,GPIO.IN) 
+
+#measures the distance 
+def Measurement(): 
+    GPIO.output(TRIG, True) 
+     
+    time.sleep(0.00001) 
+    GPIO.output(TRIG, False) 
+     
+    StartTime = time.time()
+    StopTime = time.time()
+     
+    while GPIO.input(ECHO)==0: 
+        StartTime = time.time() 
+     
+    while GPIO.input(ECHO) == 1: 
+        StopTime = time.time() 
+         
+    TimeElapsed = StopTime - StartTime 
+    distance =  TimeElapsed * 17150 
+    distance = round(distance,2) 
+     
+    return distance
+
+    
+while True: 
+    distance = Measurement()
+    print("Distance: " + str(distance) + " cm")
+
+    if (distance > 100):
+        print ("Very far")
+    if (100 > distance > 80):
+        print ("Far")
+    if (80 > distance > 60):
+        print ("Close")
+    if (60 > distance > 20):
+        print ("Very close")
+    if (20 > distance > 0):
+        print ("Impact")
+    time.sleep(1)
+    
